@@ -57,7 +57,6 @@ class NotebookConverter:
     Handles cases where the output representation is text (e.g. HTML) or bytes
     (e.g. PDF)
     """
-
     def __init__(self,
                  path_to_output,
                  exporter_name=None,
@@ -493,6 +492,7 @@ class NotebookRunner(FileLoaderMixin, Task):
                 Path(tmp_path).unlink()
 
     def run(self):
+
         if isinstance(self.product, MetaProduct):
             path_to_out = Path(str(self.product[self.nb_product_key]))
         else:

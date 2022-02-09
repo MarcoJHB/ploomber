@@ -206,7 +206,7 @@ class NotebookSource(Source):
                 cell.metadata.pop('tags')
 
         self._nb_str_rendered = nbformat.writes(nb)
-        self._post_render_validation(self._params, self._nb_str_rendered)
+        self._post_render_validation()
 
     def _read_nb_str_unrendered(self):
         """
@@ -279,15 +279,19 @@ Go to: https://ploomber.io/s/params for more information
 
             raise SourceInitializationError(msg)
 
-    def _post_render_validation(self, params, nb_str):
+    def _post_render_validation(self):
         """
         Validate params passed against parameters in the notebook
         """
-        if self.static_analysis:
-            if self.language == 'python':
-                # check for errors (e.g., undeclared variables, syntax errors)
-                nb = self._nb_str_to_obj(nb_str)
-                check_notebook(nb, params, filename=self._path or 'notebook')
+        self._check_notebook(raise_=False)
+
+    def _check_notebook(self, raise_):
+        if self.static_analysis and self.language == 'python':
+            # warn if errors (e.g., undeclared variables, syntax errors)
+            check_notebook(self._nb_str_to_obj(self._nb_str_rendered),
+                           self._params,
+                           filename=self._path or 'notebook',
+                           raise_=raise_)
 
     @property
     def doc(self):

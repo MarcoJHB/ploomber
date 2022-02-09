@@ -274,25 +274,26 @@ def test_check_params_ignores_non_variable_assignment(passed, params_source):
     pyflakes.check_params(passed, params_source, 'script.py')
 
 
-@pytest.mark.parametrize('code', [
-    """
+@pytest.mark.parametrize(
+    'code, error',
+    [["""
 # + tags=["parameters"]
 a = 1
 
 # +
 if
-""", """
+""", SyntaxError],
+     ["""
 # + tags=["parameters"]
 a = 1
 
 # +
 c = a + b
-"""
-])
-def test_check_notebook_raises(code):
+""", RenderError]])
+def test_check_notebook_raises(code, error):
     nb = jupytext.reads(code)
 
-    with pytest.raises(RenderError):
+    with pytest.raises(error):
         pyflakes.check_notebook(nb, {}, 'file.py', raise_=True)
 
 

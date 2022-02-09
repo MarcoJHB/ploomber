@@ -109,7 +109,7 @@ class MyReporter(Reporter):
             msg = self._make_error_message(error_message)
 
             if raise_:
-                raise RenderError(msg)
+                raise SyntaxError(msg)
             else:
                 warnings.warn(msg)
 
@@ -166,7 +166,7 @@ def check_notebook(nb, params, filename, raise_=True):
     check_params(params, params_cell['source'], filename, warn=not raise_)
 
 
-def check_source(nb, raise_):
+def check_source(nb, raise_=True):
     """
     Run pyflakes on a notebook, wil catch errors such as missing passed
     parameters that do not have default values
