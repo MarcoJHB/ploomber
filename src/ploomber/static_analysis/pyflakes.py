@@ -62,7 +62,6 @@ def process_errors_and_warnings(messages):
 
 # https://github.com/PyCQA/pyflakes/blob/master/pyflakes/reporter.py
 class MyReporter(Reporter):
-
     def __init__(self):
         self._stdout = StringIO()
         self._stderr = StringIO()
@@ -98,7 +97,7 @@ class MyReporter(Reporter):
                 'static_analysis to False in the task declaration '
                 'and execute again)')
 
-    def _check(self):
+    def _check(self, raise_):
         self._seek_zero()
 
         # syntax errors are stored in _stderr
@@ -107,7 +106,13 @@ class MyReporter(Reporter):
         error_message = '\n'.join(self._stderr.readlines())
 
         if self._syntax:
-            raise SyntaxError(self._make_error_message(error_message))
+            msg = self._make_error_message(error_message)
+
+            if raise_:
+                raise RenderError(msg)
+            else:
+                warnings.warn(msg)
+
         elif self._unexpected:
             warnings.warn('An unexpected error happened '
                           f'when analyzing code: {error_message.strip()!r}')
@@ -118,10 +123,15 @@ class MyReporter(Reporter):
                 warnings.warn(warnings_)
 
             if errors:
-                raise RenderError(self._make_error_message(errors))
+                msg = self._make_error_message(errors)
+
+                if raise_:
+                    raise RenderError(msg)
+                else:
+                    warnings.warn(msg)
 
 
-def check_notebook(nb, params, filename):
+def check_notebook(nb, params, filename, raise_=True):
     """
     Perform static analysis on a Jupyter notebook code cell sources
 
@@ -136,6 +146,10 @@ def check_notebook(nb, params, filename):
     filename : str
         Filename to identify pyflakes warnings and errors
 
+    raise_ : bool, default=True
+        If True, raises an Exception if it encounters errors, otherwise a
+        warning
+
     Raises
     ------
     SyntaxError
@@ -148,11 +162,11 @@ def check_notebook(nb, params, filename):
         When certain pyflakes errors are detected (e.g., undefined name)
     """
     params_cell, _ = find_cell_with_tag(nb, 'parameters')
-    check_source(nb)
-    check_params(params, params_cell['source'], filename)
+    check_source(nb, raise_=raise_)
+    check_params(params, params_cell['source'], filename, warn=not raise_)
 
 
-def check_source(nb):
+def check_source(nb, raise_):
     """
     Run pyflakes on a notebook, wil catch errors such as missing passed
     parameters that do not have default values
@@ -169,7 +183,7 @@ def check_source(nb):
     # run pyflakes.api.check on the source code
     pyflakes_api.check(source_code, filename='', reporter=reporter)
 
-    reporter._check()
+    reporter._check(raise_)
 
 
 def _comment_if_ipython_magic(source):

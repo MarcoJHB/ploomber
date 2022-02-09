@@ -55,7 +55,6 @@ def requires_path(func):
     Checks if NotebookSource instance was initialized from a file, raises
     an error if not
     """
-
     @wraps(func)
     def wrapper(self, *args, **kwargs):
 
@@ -92,7 +91,6 @@ class NotebookSource(Source):
     The render method prepares the notebook for execution: it adds the
     parameters and it makes sure kernelspec is defined
     """
-
     @requires([
         'parso', 'pyflakes', 'jupytext', 'nbformat', 'papermill',
         'jupyter_client'
