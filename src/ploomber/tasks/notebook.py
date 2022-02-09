@@ -492,6 +492,10 @@ class NotebookRunner(FileLoaderMixin, Task):
                 Path(tmp_path).unlink()
 
     def run(self):
+        # regular mode: raise but not check signature
+        # strict mode: called at render time
+        if self.static_analysis == 'regular':
+            self.source._check_notebook(raise_=True, check_signature=False)
 
         if isinstance(self.product, MetaProduct):
             path_to_out = Path(str(self.product[self.nb_product_key]))

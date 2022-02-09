@@ -131,7 +131,7 @@ class MyReporter(Reporter):
                     warnings.warn(msg)
 
 
-def check_notebook(nb, params, filename, raise_=True):
+def check_notebook(nb, params, filename, raise_=True, check_signature=True):
     """
     Perform static analysis on a Jupyter notebook code cell sources
 
@@ -163,7 +163,9 @@ def check_notebook(nb, params, filename, raise_=True):
     """
     params_cell, _ = find_cell_with_tag(nb, 'parameters')
     check_source(nb, raise_=raise_)
-    check_params(params, params_cell['source'], filename, warn=not raise_)
+
+    if check_signature:
+        check_params(params, params_cell['source'], filename, warn=not raise_)
 
 
 def check_source(nb, raise_=True):
