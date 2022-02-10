@@ -29,7 +29,6 @@ from pathlib import Path
 import warnings
 from contextlib import redirect_stdout
 from io import StringIO
-from copy import deepcopy
 
 # papermill is importing a deprecated module from pyarrow
 with warnings.catch_warnings():
