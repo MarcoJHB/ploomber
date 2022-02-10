@@ -720,8 +720,21 @@ def test_change_static_analysis(tmp_sample_tasks):
     dag.render()
 
 
-def test_validates_static_analysis_value():
-    raise NotImplementedError
+def test_validates_static_analysis_value(tmp_sample_tasks):
+    with pytest.raises(ValueError) as excinfo:
+        NotebookRunner(Path('sample.ipynb'),
+                       File('out.ipynb'),
+                       dag=DAG(),
+                       static_analysis='unknown')
+
+    expected = ("'unknown' is not a valid 'static_analysis' value, "
+                "choose one from: 'disable', 'regular', and 'strict'")
+    assert expected == str(excinfo.value)
+
+
+# deprecation warning
+def test_compatibility_with_static_analysis_bool(tmp_sample_tasks):
+    pass
 
 
 def test_warns_on_unused_parameters():

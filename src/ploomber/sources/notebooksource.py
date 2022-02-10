@@ -128,6 +128,13 @@ class NotebookSource(Source):
                             'Placeholder or pathlib.Path, got {}'.format(
                                 type(primitive)))
 
+        static_analysis_vals = {'disable', 'regular', 'strict'}
+
+        if static_analysis not in static_analysis_vals:
+            raise ValueError(f'{static_analysis!r} is not a '
+                             "valid 'static_analysis' value, choose one from: "
+                             f'{pretty_print.iterable(static_analysis_vals)}')
+
         self.static_analysis = static_analysis
         self._kernelspec_name = kernelspec_name
         self._hot_reload = hot_reload

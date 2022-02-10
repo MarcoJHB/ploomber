@@ -212,11 +212,11 @@ class NotebookRunner(FileLoaderMixin, Task):
     static_analysis : ('disabled', 'regular', 'strict'), default='regular'
         Check for various errors in the notebook. In 'regular' mode, it aborts
         execution if the notebook has syntax issues, or similar problems that
-        would cause the code to break if executed. In 'strict' mode, it performs
-        the same checks but raises an isse before starting execution of any
-        task, furthermore, it verifies that the parameters cell and the params
-        passed to the notebook match, thus, making the notebook behave like
-        a function with a signature.
+        would cause the code to break if executed. In 'strict' mode, it
+        performs the same checks but raises an isse before starting execution
+        of any task, furthermore, it verifies that the parameters cell and
+        the params passed to the notebook match, thus, making the notebook
+        behave like a function with a signature.
     nbconvert_export_kwargs : dict
         Keyword arguments to pass to the ``nbconvert.export`` function (this is
         only used if exporting the output ipynb notebook to another format).
