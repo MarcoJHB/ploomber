@@ -515,7 +515,6 @@ var = None
 
 
 def test_develop_saves_changes(tmp_dag, monkeypatch):
-
     def mock_jupyter_notebook(args, check):
         nb = jupytext.reads('2 + 2', fmt='py')
         # args: "jupyter" {app} {path} {other args, ...}
@@ -719,3 +718,24 @@ def test_change_static_analysis(tmp_sample_tasks):
 
     # this should work
     dag.render()
+
+
+def test_validates_static_analysis_value():
+    raise NotImplementedError
+
+
+def test_warns_on_unused_parameters():
+    raise NotImplementedError
+
+
+def test_static_analysis_regular_raises_error_at_runtime_if_errors():
+    raise NotImplementedError
+
+
+def test_static_analysis_strict_raises_error_at_rendertime_if_errors():
+    raise NotImplementedError
+
+
+def test_static_analysis_strict_raises_error_at_rendertime_if_signature_error(
+):
+    raise NotImplementedError

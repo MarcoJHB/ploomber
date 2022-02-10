@@ -29,6 +29,7 @@ from pathlib import Path
 import warnings
 from contextlib import redirect_stdout
 from io import StringIO
+from copy import deepcopy
 
 # papermill is importing a deprecated module from pyarrow
 with warnings.catch_warnings():
@@ -286,11 +287,11 @@ Go to: https://ploomber.io/s/params for more information
         """
         Validate params passed against parameters in the notebook
         """
+        # NOTE: maybe static_analysis = off should not turn off everything
+        # but only warn
+
         # warn on unused parameter
         _warn_on_unused_params(self._nb_obj_unrendered, self._params)
-
-        # maybe static_analysis = off should not turn off everything - but only
-        # warn
 
         # strict mode: raise and check signature
         # regular mode: _check_notebook called in NotebookRunner.run
@@ -839,6 +840,7 @@ def _nb2codestr(nb):
 
 
 def _warn_on_unused_params(nb, params):
+    nb = deepcopy(nb)
     _, idx = find_cell_with_tag(nb, 'parameters')
     del nb.cells[idx]
 
@@ -847,10 +849,11 @@ def _warn_on_unused_params(nb, params):
     # NOTE: if there a syntax error we cannot accurately check this
     m = parso.parse(code)
     names = set(m.get_used_names())
+
     # remove product since it may not be required
     # FIXME: maybe only remove it if it's a dictionary with >2 keys
     unused = set(params) - names - {'product'}
 
     if unused:
-        warnings.warn(
-            f'Found unused parameters: {pretty_print.iterable(unused)}')
+        warnings.warn('These parameters are not used in the '
+                      f'task\'s source code: {pretty_print.iterable(unused)}')
