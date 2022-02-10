@@ -290,11 +290,15 @@ a = 1
 # +
 c = a + b
 """, RenderError]])
-def test_check_notebook_raises(code, error):
+def test_check_notebook_raises_if_pyflakes_error(code, error):
     nb = jupytext.reads(code)
 
     with pytest.raises(error):
         pyflakes.check_notebook(nb, {}, 'file.py', raise_=True)
+
+
+def test_check_notebook_raises_if_signature_mismatch():
+    raise NotImplementedError
 
 
 @pytest.mark.parametrize('code', [
@@ -312,7 +316,7 @@ a = 1
 c = a + b
 """
 ])
-def test_check_notebook_warns(code):
+def test_check_notebook_warns_if_pyflakes_error(code):
     nb = jupytext.reads(code)
 
     with pytest.warns(UserWarning):
